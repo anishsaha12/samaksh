@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "941547291701",
+    "firebase_url": "https://samaksh-3ca1e.firebaseio.com",
+    "project_id": "samaksh-3ca1e",
+    "storage_bucket": "samaksh-3ca1e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941547291701:android:9d5fcd8200b2fa99",
+        "android_client_info": {
+          "package_name": "com.rising.dots.samaksh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "941547291701-7j0aepd528bl84vqk2hi75do0i5d9p2m.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "941547291701-7j0aepd528bl84vqk2hi75do0i5d9p2m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcRl2s8VDuJeOtnf9OPeq0o5e_EXNBmv8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
