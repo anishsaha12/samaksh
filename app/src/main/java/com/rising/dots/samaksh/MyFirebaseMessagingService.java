@@ -10,6 +10,7 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -51,13 +52,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             setupChannels();
         }
 
+        if(remoteMessage.getData().get("latitude")==null || remoteMessage.getData().get("longitude")==null){
+            return;
+        }
         float lat1 = Float.parseFloat(remoteMessage.getData().get("latitude"));
         float lon1 = Float.parseFloat(remoteMessage.getData().get("longitude"));
         String loc_url = "https://www.google.com/maps/?q="+lat1+","+lon1;
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-
-        sendNotification(remoteMessage);
         Location location = getLastBestLocation();
         float lat2 = (float) location.getLatitude();
         float lon2 = (float) location.getLongitude();
@@ -65,32 +67,67 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         float dist = (float) (Math.acos(Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(lon1) - Math.toRadians(lon2))) * 6371);
         Log.d("ABCD","dist = "+dist);
         Log.d("ABCD","loc_url = "+loc_url);
+
+        sendNotification(remoteMessage, dist);
     }
 
-    private void sendNotification(RemoteMessage remoteMessage){
-        int notificationId = new Random().nextInt(60000);
+    private void sendNotification(RemoteMessage remoteMessage, Float distance){
 
-        Intent intent = new Intent(this , MainActivity.class);
-        intent.putExtra("id", remoteMessage.getData().get("id"));
-        intent.putExtra("latitude", remoteMessage.getData().get("latitude"));
-        intent.putExtra("longitude", remoteMessage.getData().get("longitude"));
+        String emer = remoteMessage.getData().get("emergency");
+        if(distance<=2.0 || emer!=null){
+            int notificationId = new Random().nextInt(60000);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+            Intent intent = new Intent(this , MainActivity.class);
+            intent.putExtra("id", remoteMessage.getData().get("id"));
+            intent.putExtra("latitude", remoteMessage.getData().get("latitude"));
+            intent.putExtra("longitude", remoteMessage.getData().get("longitude"));
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
-                .setSmallIcon(R.drawable.icon)//.ic_notification_small)  //a resource for your custom small icon
-                .setContentTitle(remoteMessage.getData().get("title")) //the "title" value you sent in your notification
-                .setContentText(remoteMessage.getData().get("message")) //ditto
-                .setAutoCancel(true)  //dismisses the notification on click
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if(emer!=null) {
+                Log.d("ABCD", "Personal Emergency " + emer);
+                String numbers = remoteMessage.getData().get("closeContacts");
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+                String mynum =pref.getString("mobile_number", "");
+                Log.d("ABCD",mynum+", "+numbers);
+                if(!numbers.contains(mynum)){
+                    return;
+                }
+                intent.putExtra("emergency",1);
+                String desc = remoteMessage.getData().get("description");
+                if(desc!=null){
+                    intent.putExtra("description",desc);
+                }else intent.putExtra("description","No Description Available");
 
-        notificationManager.notify(notificationId , notificationBuilder.build());
+                String remarks = remoteMessage.getData().get("remarks");
+                if(remarks!=null){
+                    intent.putExtra("remarks",remarks);
+                    Log.d("ABCD",remarks);
+                }else intent.putExtra("remarks","No remarks");
+            }
+            else{
+                Log.d("ABCD","Broadcast");
+                intent.putExtra("emergency",0);
+            }
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent,
+                    PendingIntent.FLAG_ONE_SHOT);
+
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.icon)//.ic_notification_small)  //a resource for your custom small icon
+                    .setContentTitle("Someone is in Trouble near you!!") //the "title" value you sent in your notification
+                    .setContentText("Click on me to see details") //ditto
+                    .setAutoCancel(true)  //dismisses the notification on click
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            notificationManager.notify(notificationId , notificationBuilder.build());
+
+        }
+
     }
 
     ///_______________________________________________

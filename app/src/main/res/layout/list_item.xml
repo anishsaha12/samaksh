@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:padding="10dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="@drawable/template_1"
+        android:layout_height="wrap_content">
+
+    <!--   android:background="@drawable/tile" -->
+
+        <TextView
+            android:id="@+id/tvDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="10dp"
+            android:paddingLeft="20dp"
+            android:text="tv"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textSize="24sp"
+            android:textColor="#d2d1d1"/>
+
+    <TextView
+        android:id="@+id/tvRemarks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:text="tv"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="#d2d1d1" />
+
+    <TextView
+        android:id="@+id/tvAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:autoLink="web"
+        android:text="tv"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="#d2d1d1" />
+    </LinearLayout>
+
+
+</LinearLayout>
